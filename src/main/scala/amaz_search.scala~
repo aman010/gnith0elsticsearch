@@ -1,0 +1,53 @@
+import scalastic.elasticsearch._
+
+object indexer extends App {
+val index = Indexer.use 
+val indexType = "jdbc"
+
+val mapping = s"""
+{
+    "$indexType": {
+        "url" : "jdbc:mysql://112.196.38.250:3306/gedit",
+        "user" : "arcadian1",
+        "password" : "mysql" ,
+         "sql"  : "select * from addons" 
+    },
+        "properties" : {
+            "from" : {"type": "112.196.38.242"},
+            "to" : {"type": "112.196.38.242"}
+        }
+    }
+}
+"""
+val indexName = "_search"
+
+indexer.createIndex(indexName, settings = Map("number_of_shards" -> "1"))
+indexer.waitTillActive()
+
+indexer.putMapping(indexName, indexType, mapping)
+
+indexer.index(indexName, indexType, "1", """{"from":"112.196.38.242", "to":"112.196.38.242"}""")
+
+indexer.refresh()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
